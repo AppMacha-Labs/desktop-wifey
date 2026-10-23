@@ -1,0 +1,338 @@
+:root {
+  --ink: #3a2a30;
+  --paper: #fffafc;
+  --accent: #f48fb1;
+  --accent-ink: #b8456f;
+  --mood: #f48fb1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  color: var(--ink);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The stage is the whole screen; the actor is the box she lives in.
+   --char-size is how big she is (her art and clips are square). It comes from
+   the size setting in her window; app.ts sets it along with the actor box. */
+#stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  --char-size: 260px;
+}
+
+#actor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  /* Set from her size by app.ts (actorSize). */
+  width: var(--actor-w, 340px);
+  height: var(--actor-h, 580px);
+  will-change: transform;
+}
+
+/* ---------- character ---------- */
+
+#char {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: var(--char-size);
+  height: calc(var(--char-size) + 40px);
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  cursor: grab;
+  animation: bob 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 10px rgba(80, 30, 50, 0.18));
+}
+
+#char img,
+#char svg,
+#char video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+}
+
+/* Still art and the two clip players are stacked; only one shows at a time. */
+#char .still,
+#char video {
+  position: absolute;
+  inset: 0;
+}
+/* A new clip fades in on top; the outgoing one ('leaving') holds underneath. */
+#char video {
+  opacity: 0;
+}
+#char.live video.front {
+  opacity: 1;
+  z-index: 2;
+  transition: opacity 0.2s ease;
+}
+#char.live video.leaving {
+  opacity: 1;
+  z-index: 1;
+}
+#char.live .still {
+  visibility: hidden;
+}
+/* A straight cut between clips that join frame for frame (character.ts). */
+#char.cut video {
+  transition: none !important;
+}
+
+#stage.dragging #char {
+  cursor: grabbing;
+  animation: none;
+}
+
+#char[data-pose='angry'] {
+  animation: shake 0.5s ease-in-out infinite;
+}
+#char[data-pose='happy'],
+#char[data-pose='wave'] {
+  animation: bounce 0.6s ease-in-out infinite;
+}
+#char[data-pose='sleepy'] {
+  animation: bob 5s ease-in-out infinite;
+}
+#char.landed {
+  animation: squash 0.4s ease-out 1;
+}
+
+/* Entrances and exits: the actor slides, she waddles or braces for landing. */
+#actor.moving #char {
+  animation: waddle 0.42s ease-in-out infinite;
+}
+#actor.falling #char {
+  animation: none;
+  transform: translateX(-50%) scale(0.94, 1.08);
+}
+
+/* A clip is playing: it carries its own motion, so no CSS bob, shake or waddle. */
+#stage #char.live,
+#stage #actor.moving #char.live {
+  animation: none;
+}
+#stage #char.live.landed {
+  animation: squash 0.4s ease-out 1;
+}
+
+#char .float {
+  animation: floaty 1.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-12px) scale(1.03, 0.98);
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(0);
+  }
+  25% {
+    transform: translateX(-52%) rotate(-2deg);
+  }
+  75% {
+    transform: translateX(-48%) rotate(2deg);
+  }
+}
+@keyframes waddle {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-8px) rotate(4deg);
+  }
+}
+@keyframes squash {
+  0% {
+    transform: translateX(-50%) scale(1.18, 0.78);
+  }
+  45% {
+    transform: translateX(-50%) scale(0.94, 1.08);
+  }
+  100% {
+    transform: translateX(-50%) scale(1, 1);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+/* ---------- speech bubble ---------- */
+
+.bubble {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--char-size) + 42px);
+  background: var(--paper);
+  border: 2px solid var(--mood);
+  border-radius: 18px;
+  padding: 12px 30px 12px 14px;
+  font-size: 14px;
+  line-height: 1.35;
+  box-shadow: 0 8px 24px rgba(120, 50, 80, 0.18);
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transform-origin: 50% 100%;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  pointer-events: none;
+}
+.bubble.visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  width: 18px;
+  height: 18px;
+  background: var(--paper);
+  border-right: 2px solid var(--mood);
+  border-bottom: 2px solid var(--mood);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.bubble[data-mood='loving'] {
+  --mood: #ff6f9f;
+}
+.bubble[data-mood='content'],
+.bubble[data-mood='playful'] {
+  --mood: #f48fb1;
+}
+.bubble[data-mood='worried'] {
+  --mood: #f0b25a;
+}
+.bubble[data-mood='pouty'] {
+  --mood: #c77dff;
+}
+.bubble[data-mood='furious'] {
+  --mood: #ff4d4d;
+}
+.bubble[data-mood='sleepy'] {
+  --mood: #7c8db5;
+}
+
+.bubble .line {
+  margin: 0;
+  min-height: 1.35em;
+  word-wrap: break-word;
+}
+.bubble .close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  color: #b09aa4;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.bubble .close:hover {
+  color: var(--ink);
+}
+
+.bubble .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.bubble button:not(.close) {
+  border: 1.5px solid var(--mood);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease,
+    background 0.12s ease;
+}
+.bubble button:not(.close):hover {
+  transform: translateY(-1px);
+}
+.bubble button.primary {
+  background: var(--mood);
+  color: #fff;
+  border-color: var(--mood);
+}
+
+/* ---------- hearts ---------- */
+
+#hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.heart {
+  position: absolute;
+  bottom: calc(var(--char-size) * 0.95);
+  animation: rise 1.4s ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+  opacity: 0;
+}
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift, 0), -120px) scale(1.2);
+  }
+}

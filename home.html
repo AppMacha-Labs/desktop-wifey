@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>wifey</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- ============ her portrait ============ -->
+      <aside class="portrait">
+        <div class="drag-strip"></div>
+        <div class="arch" id="arch" data-sky="day">
+          <div class="sky"></div>
+          <div class="stars"></div>
+          <div class="orb"></div>
+          <div class="floor"></div>
+          <div id="big-char" class="big-char" title="Pet her"></div>
+          <div id="big-hearts" class="big-hearts"></div>
+        </div>
+        <div class="nameplate">
+          <p class="eyebrow">your desktop wife</p>
+          <h1 id="her-name">Wifey</h1>
+          <p class="mood-line">
+            <span class="mood-dot" id="mood-dot"></span>
+            <span id="mood-text">content</span>
+          </p>
+        </div>
+        <div class="portrait-actions">
+          <button class="btn soft" data-action="summon">Call her over</button>
+          <button class="btn soft" data-action="dismiss">Send her off</button>
+        </div>
+        <button id="dnd-chip" class="dnd-chip" hidden></button>
+      </aside>
+
+      <!-- ============ the letterbox ============ -->
+      <main class="desk">
+        <header class="topbar">
+          <h2 class="desk-title">Preferences</h2>
+          <span id="brain-badge" class="brain-badge"></span>
+        </header>
+
+        <!-- preferences -->
+        <section id="tab-settings" class="panel settings-panel">
+          <div class="settings-scroll">
+            <fieldset class="group">
+              <legend>Names</legend>
+              <label class="row">
+                <span>Her name</span>
+                <input type="text" data-setting="wifeName" maxlength="40" />
+              </label>
+              <label class="row">
+                <span>Your name</span>
+                <input type="text" data-setting="userName" maxlength="40" />
+              </label>
+              <label class="row">
+                <span>
+                  Her pet name for you
+                  <small>optional, e.g. "sweetie"</small>
+                </span>
+                <input type="text" data-setting="petName" maxlength="40" />
+              </label>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Reminders</legend>
+              <div class="row">
+                <span>💧 Water</span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="water.enabled" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row sub" data-requires="water.enabled">
+                <span>Every</span>
+                <div
+                  class="stepper"
+                  data-setting="water.intervalMin"
+                  data-step="15"
+                  data-min="10"
+                  data-max="240"
+                  data-unit="min"
+                ></div>
+              </div>
+
+              <div class="row">
+                <span>🍛 Meals</span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="meals.enabled" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row sub meals-row" data-requires="meals.enabled">
+                <span>At</span>
+                <div class="meal-times" id="meal-times"></div>
+              </div>
+
+              <div class="row">
+                <span>😴 Bedtime</span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="bedtime.enabled" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row sub" data-requires="bedtime.enabled">
+                <span>From</span>
+                <input type="time" data-setting="bedtime.time" />
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>How much she nags</legend>
+              <div class="row">
+                <span>Asks again after</span>
+                <div
+                  class="stepper"
+                  data-setting="nagAfterMin"
+                  data-step="5"
+                  data-min="1"
+                  data-max="120"
+                  data-unit="min"
+                ></div>
+              </div>
+              <div class="row">
+                <span>"Not yet" buys you</span>
+                <div
+                  class="stepper"
+                  data-setting="snoozeMin"
+                  data-step="5"
+                  data-min="1"
+                  data-max="120"
+                  data-unit="min"
+                ></div>
+              </div>
+              <div class="row">
+                <span>Gives up and sulks after</span>
+                <div
+                  class="stepper"
+                  data-setting="maxNags"
+                  data-step="1"
+                  data-min="1"
+                  data-max="10"
+                  data-unit="nags"
+                ></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Do not disturb</legend>
+              <div class="row">
+                <span>
+                  Hide during calls &amp; screen shares
+                  <small>Meet, Zoom, Teams, FaceTime…</small>
+                </span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="pauseDuringCalls" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row">
+                <span>Quiet hours</span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="quietHours.enabled" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row sub" data-requires="quietHours.enabled">
+                <span>From</span>
+                <span class="time-range">
+                  <input type="time" data-setting="quietHours.start" />
+                  <em>to</em>
+                  <input type="time" data-setting="quietHours.end" />
+                </span>
+              </div>
+              <div class="row">
+                <span>Pause her now</span>
+                <span class="chips" id="pause-chips">
+                  <button class="chip" data-pause="30">30 min</button>
+                  <button class="chip" data-pause="60">1 hour</button>
+                  <button class="chip" data-pause="120">2 hours</button>
+                  <button class="chip" data-pause="tomorrow">
+                    Till tomorrow
+                  </button>
+                  <button class="chip resume" data-pause="resume" hidden>
+                    Resume
+                  </button>
+                </span>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Look &amp; behaviour</legend>
+              <div class="row">
+                <span>Her size on the desktop</span>
+                <span class="range">
+                  <input
+                    type="range"
+                    data-setting="charSize"
+                    min="160"
+                    max="420"
+                    step="10"
+                  />
+                  <output data-for="charSize"></output>
+                </span>
+              </div>
+              <div class="row">
+                <span>Keep her on screen</span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="alwaysVisible" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row" data-requires-not="alwaysVisible">
+                <span>Lingers after talking</span>
+                <span class="range">
+                  <input
+                    type="range"
+                    data-setting="lingerSec"
+                    min="2"
+                    max="60"
+                    step="1"
+                  />
+                  <output data-for="lingerSec"></output>
+                </span>
+              </div>
+              <div class="row">
+                <span>
+                  Summon shortcut
+                  <small>click, then press the keys</small>
+                </span>
+                <button class="shortcut" id="shortcut" type="button"></button>
+              </div>
+            </fieldset>
+
+            <fieldset class="group" id="voice-group">
+              <legend>Her voice</legend>
+              <div class="row" id="voice-row">
+                <span>
+                  Speak her lines out loud
+                  <small id="voice-note"></small>
+                </span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="voice.enabled" />
+                  <i></i>
+                </label>
+              </div>
+              <div class="row">
+                <span>Volume</span>
+                <span class="range">
+                  <input
+                    type="range"
+                    data-setting="voice.volume"
+                    min="0"
+                    max="100"
+                    step="5"
+                  />
+                  <output data-for="voice.volume"></output>
+                </span>
+              </div>
+              <div class="row" id="voice-try-row">
+                <span>
+                  Hear her
+                  <small>plays a sample line here</small>
+                </span>
+                <button class="btn soft" id="voice-try" type="button">
+                  Try it
+                </button>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>Startup</legend>
+              <div class="row">
+                <span>
+                  Open at login
+                  <small id="login-note"></small>
+                </span>
+                <label class="toggle">
+                  <input type="checkbox" data-setting="launchAtLogin" />
+                  <i></i>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group try">
+              <legend>Try it</legend>
+              <p class="hint">On your desktop:</p>
+              <div class="chips">
+                <button class="chip" data-action="remind-water">
+                  💧 Water reminder
+                </button>
+                <button class="chip" data-action="remind-meal">
+                  🍛 Meal reminder
+                </button>
+                <button class="chip" data-action="remind-bedtime">
+                  😴 Bedtime
+                </button>
+                <button class="chip" data-action="summon">Call her over</button>
+                <button class="chip" data-action="dismiss">Send her off</button>
+              </div>
+              <p class="hint">Right here:</p>
+              <div class="chips" id="pose-chips"></div>
+            </fieldset>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script type="module" src="/src/home/main.ts"></script>
+  </body>
+</html>

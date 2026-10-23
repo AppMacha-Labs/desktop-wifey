@@ -1,0 +1,24 @@
+# desktop-wifey
+
+> A macOS menu bar app (Electron + Vite + TypeScript) with a cartoon wife on your desktop who reminds you to drink water, eat and sleep. Claude writes her lines (canned lines without a key), ElevenLabs voices them (optional), and MiniMax H3 clips via fal.ai animate her. MIT, by AppMacha Labs.
+
+Start with AGENTS.md for architecture, commands and conventions. Run `npm run typecheck && npm run lint` before finishing a change. Never commit `.env` or `art/private/`.
+
+## Docs
+
+- [README.md](README.md): what it does, quick start, configuration, costs, making your own character
+- [AGENTS.md](AGENTS.md): architecture, file map, commands, conventions, how to add a pose or a reminder, what not to commit
+- [art/POSES.md](art/POSES.md): every pose, its filename and when it shows
+- [art/PROMPT.md](art/PROMPT.md): copy-paste prompts for generating a character's poses
+- [.env.example](.env.example): every configuration option
+
+## Key source files
+
+- [src/main/companion.ts](src/main/companion.ts): orchestrator, events to brain to speech bubbles
+- [src/main/scheduler.ts](src/main/scheduler.ts): reminder timing and escalation
+- [src/main/brain/persona.ts](src/main/brain/persona.ts): her system prompt
+- [src/main/brain/canned.ts](src/main/brain/canned.ts): built-in lines
+- [src/shared/types.ts](src/shared/types.ts): poses, moods, events, settings, IPC
+- [src/renderer/stage.ts](src/renderer/stage.ts): how she moves around the screen
+- [art/clips.json](art/clips.json): animated clip specs
+- [scripts/clips.mjs](scripts/clips.mjs): clip generation pipeline
