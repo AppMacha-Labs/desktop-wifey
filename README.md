@@ -43,7 +43,7 @@ She lives in the menu bar as 💕 (💤 while she's paused).
 You need macOS, Node 20+ and npm.
 
 ```bash
-git clone https://github.com/0xindiebruh/desktop-wifey.git
+git clone https://github.com/AppMacha-Labs/desktop-wifey.git
 ```
 
 ```bash
